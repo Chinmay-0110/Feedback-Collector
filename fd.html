@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Feedback Collector</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+  <main class="max-w-xl mx-auto py-10 px-4">
+    <h1 class="text-3xl font-bold mb-6">Feedback Collector</h1>
+
+    <form id="feedback-form" class="space-y-4">
+      <input type="text" name="name" placeholder="Full Name" required class="w-full border px-3 py-2 rounded" />
+      <input type="email" name="email" placeholder="Email" required class="w-full border px-3 py-2 rounded" />
+      <textarea name="message" placeholder="Your feedback..." required class="w-full border px-3 py-2 rounded"></textarea>
+      <button type="submit" id="submit-btn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Submit Feedback</button>
+    </form>
+
+    <button id="view-feedbacks" class="mt-6 underline text-blue-600 hover:text-blue-800">View Submitted Feedback</button>
+
+    <div id="feedback-list" class="mt-6 space-y-4 hidden"></div>
+  </main>
+
+  
+
+  <script>
+    const form = document.getElementById('feedback-form');
+    const feedbackList = document.getElementById('feedback-list');
+    const viewBtn = document.getElementById('view-feedbacks');
+    const submitBtn = document.getElementById('submit-btn');
+
+    let feedbacks = [];
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitBtn.textContent = 'Submitting...';
+
+      const formData = new FormData(form);
+      const entry = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        message: formData.get('message'),
+        timestamp: new Date().toISOString()
+      };
+
+      feedbacks.push(entry);
+      form.reset();
+      submitBtn.textContent = 'Submit Feedback';
+    });
+
+    viewBtn.addEventListener('click', () => {
+      feedbackList.innerHTML = '';
+      feedbackList.classList.remove('hidden');
+      feedbacks.forEach(fb => {
+        const card = document.createElement('div');
+        card.className = 'bg-white shadow rounded p-4';
+        card.innerHTML = `
+          <p class="font-semibold">${fb.name} (${fb.email})</p>
+          <p class="text-sm text-gray-600">${new Date(fb.timestamp).toLocaleString()}</p>
+          <p class="mt-2">${fb.message}</p>
+        `;
+        feedbackList.appendChild(card);
+      });
+    });
+  </script>
+</body>
+</html>
